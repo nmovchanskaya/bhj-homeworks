@@ -1,60 +1,64 @@
-let currentActiveNumber = 0;
 let slides = Array.from(document.querySelectorAll(".slider__item"));
-let slider_dots = Array.from(document.querySelectorAll(".slider__dot"));
+let sliderDots = Array.from(document.querySelectorAll(".slider__dot"));
 
-function activate_current() {
+function activateCurrent(currentActiveNumber) {
     slides[currentActiveNumber].className += " slider__item_active";
-    slider_dots[currentActiveNumber].className += " slider__dot_active";
+    sliderDots[currentActiveNumber].className += " slider__dot_active";
 }
 
-function deactivate_previous(previousNum) {
+function deactivatePrevious(previousNum) {
     slides[previousNum].className = "slider__item";
-    slider_dots[previousNum].className = "slider__dot";
+    sliderDots[previousNum].className = "slider__dot";
 }
 
 document.querySelector(".slider__arrow_prev").onclick = function() {
 
+    let currentActiveNumber = slides.findIndex((item) => item.className.includes("slider__item_active"));
     if (currentActiveNumber === 0) {
         currentActiveNumber = slides.length - 1;
 
         //deactivate previously selected photo and dot
-        deactivate_previous(0);
+        deactivatePrevious(0);
     }
     else {  
         currentActiveNumber--;   
 
         //deactivate previously selected photo and dot
-        deactivate_previous(currentActiveNumber + 1);
+        deactivatePrevious(currentActiveNumber + 1);
     }
 
     //activate new photo and dot
-    activate_current();
+    activateCurrent(currentActiveNumber);
 };
 
 document.querySelector(".slider__arrow_next").onclick = function() {
+    
+    let currentActiveNumber = slides.findIndex((item) => item.className.includes("slider__item_active"));
     if (currentActiveNumber === slides.length - 1) {
         currentActiveNumber = 0;
 
         //deactivate previously selected photo and dot
-        deactivate_previous(slides.length - 1);
+        deactivatePrevious(slides.length - 1);
     }
     else {
         currentActiveNumber++;
 
         //deactivate previously selected photo and dot
-        deactivate_previous(currentActiveNumber - 1);
+        deactivatePrevious(currentActiveNumber - 1);
     }
 
     //activate new photo and dot
-    activate_current();
+    activateCurrent(currentActiveNumber);
 };
 
-slider_dots.forEach((item, index) => {
+sliderDots.forEach((item, index) => {
     item.onclick = function() {
+        let currentActiveNumber = slides.findIndex((item) => item.className.includes("slider__item_active"));
+        
         if (index !== currentActiveNumber) {       
-            deactivate_previous(currentActiveNumber);
+            deactivatePrevious(currentActiveNumber);
             currentActiveNumber = index;
-            activate_current();
+            activateCurrent(currentActiveNumber);
         }
     }
 });
