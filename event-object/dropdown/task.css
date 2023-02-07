@@ -5,6 +5,7 @@
   position: relative;
   font-family: Helvetica;
   font-weight: 300;
+  display: inline-block;
 }
 
 .dropdown__value {
@@ -29,7 +30,7 @@
   padding: 0;
   margin: 0;
   top: 100%;
-  left: 145px;
+  left: 0;
   border: 1px solid gray;
   border-bottom: none;
   border-radius: 4px;
