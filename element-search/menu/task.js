@@ -7,7 +7,6 @@ Array.from(document.querySelectorAll(".menu__link")).forEach((item) => {
             if (menuSub.className.includes("menu_active")) {
                 menuSub.className = "menu menu_sub";
             }
-
             //deactivate active submenu and activate new one
             else {
                 Array.from(document.querySelectorAll(".menu_active")).forEach(
