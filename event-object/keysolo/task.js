@@ -5,46 +5,46 @@ class Game {
     this.lossElement = document.querySelector('.status__loss');
     this.symbolsOK = 0;
 
-    this.registerEvents(this);
+    let registerEventsBinded = this.registerEvents.bind(this);
+    registerEventsBinded();
   }
 
-  registerEvents(game) {
-    document.addEventListener("keyup", function(e) {
+  registerEvents() {
+    document.addEventListener("keyup", (e) => {
 
       //ignore if it was service key for upper case etc.
-      if (e.key === "Shift" || e.key === "Alt" || e.key === "Meta" || e.key === "Capslock") {
-        if (e.key === "Meta") {
-          game.prevMeta = true;
-        }
-        return;
-      }
-      //ignore if it was change language in MacOS
-      if (e.key === " " && game.prevMeta) {
+      if (e.key === "Shift" && e.ctrlKey ||
+          e.key === "Ctrl" && e.shiftKey ||
+          e.key === "Shift" && e.altKey || 
+          e.key === "Alt" && e.shiftKey || 
+          e.key === " " && e.metaKey || 
+          e.key === "Capslock" ||
+          e.key === "Meta") {
         return;
       }
   
       //reset timer
-      if (game.symbolsOK === 0) {
-        game.timeStart = Date.now();
+      if (this.symbolsOK === 0) {
+        this.timeStart = Date.now();
       }
       //get the time of new symbol
       else {
-        game.timeNext = Date.now();
+        this.timeNext = Date.now();
       }
       //check if the time is ok
-      if (Math.round((game.timeNext - game.timeStart) / 1000) > game.wordElement.querySelectorAll(".symbol").length) {
-        game.fail();
+      if (Math.round((this.timeNext - this.timeStart) / 1000) > this.wordElement.querySelectorAll(".symbol").length) {
+        this.fail();
         return;
       }
 
-      game.currentSymbol = Array.from(game.wordElement.querySelectorAll(".symbol"))[game.symbolsOK].textContent;
+      this.currentSymbol = Array.from(this.wordElement.querySelectorAll(".symbol"))[this.symbolsOK].textContent;
       
       //check if we entered right symbol
-      if (e.key.toLowerCase() === game.currentSymbol.toLowerCase()) {
-        game.success();
+      if (e.key.toLowerCase() === this.currentSymbol.toLowerCase()) {
+        this.success();
       }
       else {
-        game.fail();
+        this.fail();
       }
     });
   }
@@ -119,4 +119,4 @@ class Game {
   }
 }
 
-new Game();
+let game = new Game();

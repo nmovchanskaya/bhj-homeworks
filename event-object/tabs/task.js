@@ -9,7 +9,7 @@ tabs.forEach((item) => {
         let currentActiveIdx =  tabsButtons.indexOf(e.currentTarget.querySelector(".tab_active"));
     
         //if we selected new button, which was not selected previously
-        if (newIdx !== currentActiveIdx) {
+        if (newIdx !== currentActiveIdx && newIdx >= 0) {
             e.currentTarget.querySelector(".tab_active").className = "tab";
             e.target.className += " tab_active";
             console.log(newIdx);
