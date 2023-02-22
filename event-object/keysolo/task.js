@@ -3,10 +3,18 @@ class Game {
     this.wordElement = document.querySelector('.word');
     this.winsElement = document.querySelector('.status__wins');
     this.lossElement = document.querySelector('.status__loss');
+    this.timer = document.querySelector('.timer');
     this.symbolsOK = 0;
 
-    let registerEventsBinded = this.registerEvents.bind(this);
-    registerEventsBinded();
+    this.registerEvents();
+    this.timer.textContent = this.wordElement.querySelectorAll(".symbol").length;
+    setInterval(() => {
+      this.timer.textContent -= 1;
+
+      if (this.timer.textContent === "-1") {
+          this.fail();
+      }
+    }, 1000);
   }
 
   registerEvents() {
@@ -114,6 +122,9 @@ class Game {
       newWordHTML += '<span class="symbol">' + newWord[i] + '</span>';
     }
     this.wordElement.innerHTML = newWordHTML;
+    
+    //update timer
+    this.timer.textContent = newWord.length;
 
     return newWord;
   }
