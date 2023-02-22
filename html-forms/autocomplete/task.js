@@ -41,7 +41,7 @@ class Autocomplete {
   }
 
   onSelect( item ) {
-    this.input.selectedIndex = item.index;
+    this.input.selectedIndex = item.value;
     this.valueElement.textContent = item.text;
 
     this.searchInput.classList.remove( 'autocomplete__search_active' );
@@ -81,12 +81,15 @@ class Autocomplete {
         value: 'Содержимое атрибута value'
       }
     */
-    return [
-      {
-        text: 'Чубакка',
-        value: '1'
+   let arr = [];
+
+    Array.from(this.input.options).forEach((item) => {
+      if (item.label.includes(text)) {
+        arr.push({text: item.label, value: item.value});
       }
-    ];
+    });
+
+    return arr;
   }
 }
 
