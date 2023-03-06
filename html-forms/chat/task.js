@@ -18,7 +18,7 @@ class Chat {
 
         //if Enter -> create HTML content for chat-widget
         this.chatWidgetInput.addEventListener("keyup", (e) => {
-            if (e.code == "Enter" && this.chatWidgetInput.value != "") {
+            if (e.code == "Enter" && this.chatWidgetInput.value.trim() != "") {
                 let date = new Date();
                 let messages = `<div class="message message_client">
                                     <div class="message__time">` + date.getHours().toString().padStart(2, '0') + `:` + date.getMinutes().toString().padStart(2, '0') + `</div>
