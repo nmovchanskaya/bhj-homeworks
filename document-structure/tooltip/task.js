@@ -1,47 +1,48 @@
-let withTooltips = Array.from(document.querySelectorAll(".has-tooltip"));
+const withTooltips = Array.from(document.querySelectorAll(".has-tooltip"));
+const body = document.querySelector("body");
+const tooltip = document.createElement("div");
+let scrolled;
+body.appendChild(tooltip);
+
+window.onload = (e) => {
+    scrolled = document.documentElement.scrollTop;
+}
 
 withTooltips.forEach((item) => {
     item.addEventListener("click", (e) => {
 
-        //deactivate all tooltips
-        let tooltips = Array.from(document.querySelectorAll(".tooltip_active"));
-        tooltips.forEach((item) => {
-            item.classList.remove("tooltip_active");
-        });
+        //close tooltip if clicked twice
+        if (tooltip.textContent === item.getAttribute("title")) {
+            tooltip.classList.remove("tooltip_active");
+            return;
+        }
 
-        //create div
-        let containerWithTooltip = document.createElement("span");
-        containerWithTooltip.style.position = "relative";
-
-        //insert our link there
-        containerWithTooltip.appendChild(item.cloneNode(true));
-        
-        //insert our tooltip there too
-        let tooltip = document.createElement("div");
+        //set text and position for tooltip
         tooltip.textContent = item.getAttribute("title");
-
-        tooltip.style.left = 0;
-        tooltip.style.top = "100%";
+        tooltip.style.left = item.getBoundingClientRect().left + "px";
+        tooltip.style.top = (item.getBoundingClientRect().top + 20) + "px";
 
         tooltip.classList.add("tooltip");
         tooltip.classList.add("tooltip_active");
-        containerWithTooltip.appendChild(tooltip);
-        item.replaceWith(containerWithTooltip);
 
+        //set position if tooltip has to be on the top, left or right
         if (item.dataset.position === "top") {
-            let tooltipTop = document.querySelector(".tooltip_active");
-            tooltipTop.style.top = (-1 * tooltip.offsetHeight) + 'px';
+            tooltip.style.top = (item.getBoundingClientRect().top - 30) + "px";
         }
         else if (item.dataset.position === "left") {
-            //!!В этом случае как-то криво работает((
-            tooltip.style.left = (-1 * tooltip.offsetWidth) + 'px';
-            tooltip.style.top = 0;
+            tooltip.style.left = (item.getBoundingClientRect().left - tooltip.offsetWidth) + 'px';
+            tooltip.style.top = item.getBoundingClientRect().top + "px";
         }
         else if (item.dataset.position === "right") {
-            tooltip.style.left = "100%";
-            tooltip.style.top = 0;
+            tooltip.style.left = item.getBoundingClientRect().right + "px";
+            tooltip.style.top = item.getBoundingClientRect().top + "px";
         }
-
+    
         e.preventDefault();
     });
+});
+
+document.addEventListener("wheel", (e) => {
+    tooltip.style.top = (parseInt(tooltip.style.top) + scrolled - document.documentElement.scrollTop) + "px";
+    scrolled = document.documentElement.scrollTop;
 });
