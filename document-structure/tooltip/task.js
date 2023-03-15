@@ -7,13 +7,14 @@ body.appendChild(tooltip);
 window.onload = (e) => {
     scrolled = document.documentElement.scrollTop;
 }
-
+//
 withTooltips.forEach((item) => {
     item.addEventListener("click", (e) => {
 
         //close tooltip if clicked twice
         if (tooltip.textContent === item.getAttribute("title")) {
             tooltip.classList.remove("tooltip_active");
+            e.preventDefault();
             return;
         }
 
@@ -42,7 +43,7 @@ withTooltips.forEach((item) => {
     });
 });
 
-document.addEventListener("wheel", (e) => {
+/*document.addEventListener("wheel", (e) => {
     tooltip.style.top = (parseInt(tooltip.style.top) + scrolled - document.documentElement.scrollTop) + "px";
     scrolled = document.documentElement.scrollTop;
-});
+});*/

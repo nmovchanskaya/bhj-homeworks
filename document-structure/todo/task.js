@@ -2,20 +2,39 @@ const tasksInput = document.querySelector(".tasks__input");
 const tasksList = document.querySelector(".tasks__list");
 const tasksAdd = document.querySelector(".tasks__add");
 
+function saveTitles() {
+    //save titles for task list in localStorage
+    let titlesArray = [];
+    Array.from(tasksList.querySelectorAll(".task__title")).forEach((item) => {
+        titlesArray.push(item.textContent.trim());
+    })
+
+    localStorage.setItem("titlesArray", JSON.stringify(titlesArray));
+}
+
 window.onload = (e) => {
     //load task list when window was loaded
-    let tasksListHTML = localStorage.getItem("tasksListHTML");
+    let titlesArray = JSON.parse(localStorage.getItem("titlesArray"));
 
-    if (tasksListHTML) {
-        tasksList.innerHTML = tasksListHTML;
-        let removeLinks = Array.from(document.querySelectorAll(".task__remove"));
-        removeLinks.forEach((item) => {
-            item.addEventListener("click", (e) => {
-                item.closest("div").remove();
+    if (titlesArray) {
+        titlesArray.forEach(item => {
+            //add task in HTML
+            let newTask = document.createElement("div");
+            newTask.innerHTML = 
+                `<div class="task">
+                <div class="task__title">
+                    ${item}
+                </div>
+                <a href="#" class="task__remove">&times;</a>
+                </div>`;
 
-                //save HTML for task list in localStorage
-                localStorage.setItem("tasksListHTML", tasksList.innerHTML);
+            //add remove button
+            newTask.querySelector(".task__remove").addEventListener("click", (e) => {
+                e.target.closest("div").remove();
+                saveTitles();
             });
+
+            tasksList.appendChild(newTask);
         });
     }
 }
@@ -24,28 +43,28 @@ tasksAdd.addEventListener("click", (e) => {
     
     e.preventDefault();
 
-    if (tasksInput.value != "") {
+    if (tasksInput.value.trim() != "") {
 
         //create new task in HTML
         let newTask = document.createElement("div");
-        newTask.classList.add("task");
-        let taskTitle = document.createElement("div");
-        taskTitle.classList.add("task__title");
-        taskTitle.textContent = tasksInput.value;
-        let removeLink = document.createElement("a");
-        removeLink.classList.add("task__remove");
-        removeLink.innerHTML = "&times;";
-        removeLink.setAttribute("href", "#");
-        removeLink.addEventListener("click", (e) => {
-            removeLink.closest("div").remove();
+        newTask.innerHTML = 
+            `<div class="task">
+            <div class="task__title">
+                ${tasksInput.value}
+            </div>
+            <a href="#" class="task__remove">&times;</a>
+            </div>`;
+
+        //add remove button
+        newTask.querySelector(".task__remove").addEventListener("click", (e) => {
+            e.target.closest("div").remove();
+            saveTitles();
         });
 
-        newTask.appendChild(taskTitle);
-        newTask.appendChild(removeLink);
-
         tasksList.appendChild(newTask);
+        tasksInput.value = "";
 
-        //save HTML for task list in localStorage
-        localStorage.setItem("tasksListHTML", tasksList.innerHTML);
+        //save titles for task list in localStorage
+        saveTitles();
     }
 });

@@ -3,9 +3,29 @@ const cartWrapper = document.querySelector(".cart");
 const productControls = Array.from(document.querySelectorAll(".product__controls"));
 const body = document.querySelector("body");
 
+class CartItem {
+    constructor(id, image, qty) {
+        this.id = id;
+        this.image = image;
+        this.qty = qty;
+    }
+}
+
+function saveCart() {
+    //save items, quantities from cart in localStorage
+    let itemsArray = [];
+    Array.from(cart.querySelectorAll(".cart__product")).forEach((item) => {
+        let qty = item.querySelector(".cart__product-count").textContent.trim();
+        let image = item.querySelector(".cart__product-image").getAttribute("src");;
+        let cartItem = new CartItem(item.dataset.id, image, qty)
+        itemsArray.push(cartItem);
+    })
+
+    localStorage.setItem("cartItems", JSON.stringify(itemsArray));
+}
+
 function makeTransition(productImage, coordinatesCart, isFirstAddition, cartProduct) {
      //create a copy of image to do visual transition to cart
-     //let productImage = e.target.closest("div.product").querySelector(".product__image");
      let productImageCopy = document.createElement("img");
      productImageCopy.setAttribute("src", productImage.getAttribute("src"));
      productImageCopy.classList.add("product__image");
@@ -48,34 +68,46 @@ function makeTransition(productImage, coordinatesCart, isFirstAddition, cartProd
                 cartProduct.classList.remove("invisible");
              }
 
-             //save HTML for cart products in localStorage
-             localStorage.setItem("cartProductsHTML", cart.innerHTML);
+             //save cart in localStorage
+             saveCart();
          }
      }, 10);
 }
 
 window.onload = (e) => {
-    
-    let cartProductsHTML = localStorage.getItem("cartProductsHTML");
-    cart.innerHTML = cartProductsHTML;
-    let hasProducts = cart.querySelector(".cart__product");
+    let cartItems = JSON.parse(localStorage.getItem("cartItems"));
 
-    if (hasProducts) {
-        
-        let removeLinks = Array.from(document.querySelectorAll(".cart__product-del"));
-        removeLinks.forEach((item) => {
-            item.addEventListener("click", (e) => {
+    if (cartItems.length) {
+        cartItems.forEach(item => {
 
-                item.parentElement.remove();
+            let cartProduct = document.createElement("div");                
+
+            cartProduct.innerHTML = 
+                `<div class="cart__product" class="cart__product" data-id="${item.id}">
+                    <img class="cart__product-image" src="${item.image}">
+                    <div class="cart__product-count">
+                        ${item.qty}
+                    </div>
+                    <div class="cart__product-del">
+                        &times;
+                    </div>
+                </div>`;
+
+            //add remove button
+            cartProduct.querySelector(".cart__product-del").addEventListener("click", (e) => {
+
+                cart.removeChild(cartProduct);
 
                 //check if there are no products left - hide cart
                 if (!cart.querySelectorAll(".cart__product").length) {
                     cartWrapper.classList.add("invisible");
                 }
-    
-                //save HTML for cart products in localStorage
-                localStorage.setItem("cartProductsHTML", cart.innerHTML);
+
+                //save cart in localStorage
+                saveCart();
             });
+
+            cart.appendChild(cartProduct);
         });
     }
     else {
@@ -122,37 +154,32 @@ productControls.forEach((item) => {
                 //make cart visible
                 cartWrapper.classList.remove("invisible");
 
-                let cartProduct = document.createElement("div");
-                cartProduct.classList.add("cart__product");
-                cartProduct.setAttribute("data-id", e.target.closest("div.product").dataset.id);
+                let cartProduct = document.createElement("div");                
 
-                let cartProductImage = document.createElement("img");
-                cartProductImage.classList.add("cart__product-image");
-                cartProductImage.setAttribute("src", e.target.closest("div.product").querySelector(".product__image").getAttribute("src"));
+                cartProduct.innerHTML = 
+                    `<div class="cart__product" class="cart__product" data-id="${e.target.closest("div.product").dataset.id}">
+                        <img class="cart__product-image" src="${e.target.closest("div.product").querySelector(".product__image").getAttribute("src")}">
+                        <div class="cart__product-count">
+                            ${e.target.parentElement.querySelector(".product__quantity-value").textContent}
+                        </div>
+                        <div class="cart__product-del">
+                            &times;
+                        </div>
+                    </div>`;
 
-                let cartProductCount = document.createElement("div");
-                cartProductCount.classList.add("cart__product-count");
-                cartProductCount.textContent = parseInt(e.target.parentElement.querySelector(".product__quantity-value").textContent);
+                //add remove button
+                cartProduct.querySelector(".cart__product-del").addEventListener("click", (e) => {
 
-                //delete button
-                let cartProductDel = document.createElement("div");
-                cartProductDel.classList.add("cart__product-del");
-                cartProductDel.innerHTML = "&times;";
-                cartProductDel.addEventListener("click", (e) => {
-                    cart.removeChild(e.target.parentElement);
+                    cart.removeChild(cartProduct);
 
                     //check if there are no products left - hide cart
                     if (!cart.querySelectorAll(".cart__product").length) {
                         cartWrapper.classList.add("invisible");
                     }
 
-                    //save HTML for cart products in localStorage
-                    localStorage.setItem("cartProductsHTML", cart.innerHTML);
+                    //save cart in localStorage
+                    saveCart();
                 });
-
-                cartProduct.appendChild(cartProductImage);
-                cartProduct.appendChild(cartProductCount);
-                cartProduct.appendChild(cartProductDel);
 
                 cart.appendChild(cartProduct);
 
