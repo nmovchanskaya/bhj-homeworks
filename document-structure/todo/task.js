@@ -12,29 +12,34 @@ function saveTitles() {
     localStorage.setItem("titlesArray", JSON.stringify(titlesArray));
 }
 
+function newTask(text) {
+    //add task in HTML
+    let newTask = document.createElement("div");
+    newTask.innerHTML = 
+        `<div class="task">
+        <div class="task__title">
+            ${text}
+        </div>
+        <a href="#" class="task__remove">&times;</a>
+        </div>`;
+
+    //add remove button
+    newTask.querySelector(".task__remove").addEventListener("click", (e) => {
+        e.target.closest("div").remove();
+        saveTitles();
+    });
+
+    tasksList.appendChild(newTask);
+    tasksInput.value = "";
+}
+
 window.onload = (e) => {
     //load task list when window was loaded
     let titlesArray = JSON.parse(localStorage.getItem("titlesArray"));
 
     if (titlesArray) {
         titlesArray.forEach(item => {
-            //add task in HTML
-            let newTask = document.createElement("div");
-            newTask.innerHTML = 
-                `<div class="task">
-                <div class="task__title">
-                    ${item}
-                </div>
-                <a href="#" class="task__remove">&times;</a>
-                </div>`;
-
-            //add remove button
-            newTask.querySelector(".task__remove").addEventListener("click", (e) => {
-                e.target.closest("div").remove();
-                saveTitles();
-            });
-
-            tasksList.appendChild(newTask);
+            newTask(item);
         });
     }
 }
@@ -45,24 +50,7 @@ tasksAdd.addEventListener("click", (e) => {
 
     if (tasksInput.value.trim() != "") {
 
-        //create new task in HTML
-        let newTask = document.createElement("div");
-        newTask.innerHTML = 
-            `<div class="task">
-            <div class="task__title">
-                ${tasksInput.value}
-            </div>
-            <a href="#" class="task__remove">&times;</a>
-            </div>`;
-
-        //add remove button
-        newTask.querySelector(".task__remove").addEventListener("click", (e) => {
-            e.target.closest("div").remove();
-            saveTitles();
-        });
-
-        tasksList.appendChild(newTask);
-        tasksInput.value = "";
+        newTask(tasksInput.value);
 
         //save titles for task list in localStorage
         saveTitles();
