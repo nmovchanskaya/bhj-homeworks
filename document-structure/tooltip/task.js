@@ -1,13 +1,8 @@
 const withTooltips = Array.from(document.querySelectorAll(".has-tooltip"));
 const body = document.querySelector("body");
 const tooltip = document.createElement("div");
-let scrolled;
 body.appendChild(tooltip);
 
-window.onload = (e) => {
-    scrolled = document.documentElement.scrollTop;
-}
-//
 withTooltips.forEach((item) => {
     item.addEventListener("click", (e) => {
 
@@ -43,7 +38,3 @@ withTooltips.forEach((item) => {
     });
 });
 
-/*document.addEventListener("wheel", (e) => {
-    tooltip.style.top = (parseInt(tooltip.style.top) + scrolled - document.documentElement.scrollTop) + "px";
-    scrolled = document.documentElement.scrollTop;
-});*/
