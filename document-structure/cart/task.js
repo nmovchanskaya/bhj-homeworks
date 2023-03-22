@@ -74,40 +74,46 @@ function makeTransition(productImage, coordinatesCart, isFirstAddition, cartProd
      }, 10);
 }
 
+function newCartItem(item) {
+    let cartProduct = document.createElement("div");    
+        cartProduct.classList.add("cart__product"); 
+        cartProduct.setAttribute("data-id", item.id);           
+
+        cartProduct.innerHTML = 
+            `
+                <img class="cart__product-image" src="${item.image}">
+                <div class="cart__product-count">
+                    ${item.qty}
+                </div>
+                <div class="cart__product-del">
+                    &times;
+                </div>
+            `;
+
+        //add remove button
+        cartProduct.querySelector(".cart__product-del").addEventListener("click", (e) => {
+
+            cart.removeChild(cartProduct);
+
+            //check if there are no products left - hide cart
+            if (!cart.querySelectorAll(".cart__product").length) {
+                cartWrapper.classList.add("invisible");
+            }
+
+            //save cart in localStorage
+            saveCart();
+        });
+
+        cart.appendChild(cartProduct);
+        return cartProduct;
+}
+
 window.onload = (e) => {
     let cartItems = JSON.parse(localStorage.getItem("cartItems"));
 
     if (cartItems.length) {
         cartItems.forEach(item => {
-
-            let cartProduct = document.createElement("div");                
-
-            cartProduct.innerHTML = 
-                `<div class="cart__product" class="cart__product" data-id="${item.id}">
-                    <img class="cart__product-image" src="${item.image}">
-                    <div class="cart__product-count">
-                        ${item.qty}
-                    </div>
-                    <div class="cart__product-del">
-                        &times;
-                    </div>
-                </div>`;
-
-            //add remove button
-            cartProduct.querySelector(".cart__product-del").addEventListener("click", (e) => {
-
-                cart.removeChild(cartProduct);
-
-                //check if there are no products left - hide cart
-                if (!cart.querySelectorAll(".cart__product").length) {
-                    cartWrapper.classList.add("invisible");
-                }
-
-                //save cart in localStorage
-                saveCart();
-            });
-
-            cart.appendChild(cartProduct);
+            newCartItem(item);
         });
     }
     else {
@@ -154,34 +160,12 @@ productControls.forEach((item) => {
                 //make cart visible
                 cartWrapper.classList.remove("invisible");
 
-                let cartProduct = document.createElement("div");                
-
-                cartProduct.innerHTML = 
-                    `<div class="cart__product" class="cart__product" data-id="${e.target.closest("div.product").dataset.id}">
-                        <img class="cart__product-image" src="${e.target.closest("div.product").querySelector(".product__image").getAttribute("src")}">
-                        <div class="cart__product-count">
-                            ${e.target.parentElement.querySelector(".product__quantity-value").textContent}
-                        </div>
-                        <div class="cart__product-del">
-                            &times;
-                        </div>
-                    </div>`;
-
-                //add remove button
-                cartProduct.querySelector(".cart__product-del").addEventListener("click", (e) => {
-
-                    cart.removeChild(cartProduct);
-
-                    //check if there are no products left - hide cart
-                    if (!cart.querySelectorAll(".cart__product").length) {
-                        cartWrapper.classList.add("invisible");
-                    }
-
-                    //save cart in localStorage
-                    saveCart();
-                });
-
-                cart.appendChild(cartProduct);
+                let newItem = {
+                    "id": e.target.closest("div.product").dataset.id,
+                    "image": e.target.closest("div.product").querySelector(".product__image").getAttribute("src"),
+                    "qty": e.target.parentElement.querySelector(".product__quantity-value").textContent
+                };
+                let cartProduct = newCartItem(newItem);
 
                 let coordinatesInCart = cartProduct.getBoundingClientRect();
                 //make invisible for the time of animation
