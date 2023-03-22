@@ -15,13 +15,12 @@ function saveTitles() {
 function newTask(text) {
     //add task in HTML
     let newTask = document.createElement("div");
+    newTask.classList.add("task");
     newTask.innerHTML = 
-        `<div class="task">
-        <div class="task__title">
+        `<div class="task__title">
             ${text}
         </div>
-        <a href="#" class="task__remove">&times;</a>
-        </div>`;
+        <a href="#" class="task__remove">&times;</a>`;
 
     //add remove button
     newTask.querySelector(".task__remove").addEventListener("click", (e) => {
