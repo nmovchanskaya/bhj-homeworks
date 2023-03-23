@@ -1,5 +1,6 @@
 const items = document.querySelector("#items");
 const loader = document.querySelector("#loader");
+const xhr = new XMLHttpRequest();
 
 function renderValutesBlock(arr) {
 
@@ -23,21 +24,24 @@ function renderValutesBlock(arr) {
     loader.classList.remove("loader_active");
 }
 
+function sendXMLHttpRequest(xhr, method, url) {
+    xhr.open(method, url);
+    xhr.send();
+}
+
 window.onload = (e) => {
     let valutes = JSON.parse(localStorage.getItem("valutes"));
     if (valutes) {
         renderValutesBlock(valutes);
     }
+
+    //create and send XMLHttpRequest
+    sendXMLHttpRequest(xhr, "GET", "https://students.netoservices.ru/nestjs-backend/slow-get-courses");
 };
 
-//create and send XMLHttpRequest
-let xhr = new XMLHttpRequest();
-xhr.open("GET", "https://students.netoservices.ru/nestjs-backend/slow-get-courses");
-xhr.send();
-
 //update currency list when get data
-xhr.onreadystatechange = (e) => {
-    if (xhr.readyState === 4 && xhr.status === 200) {
+xhr.onprogress = (e) => {
+    if (e.loaded === e.total) {
         let arr = Object.values((JSON.parse(xhr.responseText)).response.Valute);
         localStorage.setItem("valutes", JSON.stringify(arr));
 
