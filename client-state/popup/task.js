@@ -1,6 +1,6 @@
 // возвращает cookie если есть или undefined
 function getCookie(name) {
-//
+
     var matches = document.cookie.match(new RegExp(
       "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
     ))
